@@ -25,6 +25,7 @@ var (
 	reflectTypeUInt64      = reflect.TypeOf(uint64(0))
 	reflectTypeFloat32     = reflect.TypeOf(float32(0))
 	reflectTypeFloat64     = reflect.TypeOf(float64(0))
+	reflectBool            = reflect.TypeOf(false)
 )
 
 func readNumber(s io.RuneScanner) (string, error) {
@@ -574,6 +575,21 @@ func (p *nothingParser) Type() reflect.Type {
 	return reflectTypeEmptyStruct
 }
 
+type boolParser struct{}
+
+func (p *boolParser) Parse(s io.RuneScanner) (driver.Value, error) {
+	raw, err := readString(s, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return strings.Compare("true", strings.ToLower(raw)) == 0, nil
+}
+
+func (p *boolParser) Type() reflect.Type {
+	return reflectBool
+}
+
 // DataParserOptions describes DataParser options.
 // Ex.: Fields Location and UseDBLocation specify timezone options.
 type DataParserOptions struct {
@@ -733,6 +749,8 @@ func newDataParser(t *TypeDesc, unquote bool, opt *DataParserOptions) (DataParse
 			key:   keyParser,
 			value: valueParser,
 		}, nil
+	case "Bool":
+		return &boolParser{}, nil
 	default:
 		return nil, fmt.Errorf("type %s is not supported", t.Name)
 	}

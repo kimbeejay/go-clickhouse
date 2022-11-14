@@ -430,6 +430,30 @@ func TestParseData(t *testing.T) {
 			inputdata: "2a02:aa08:e000:3100::2",
 			output:    "2a02:aa08:e000:3100::2",
 		},
+		{
+			name:      "boolean: lowercase",
+			inputtype: "Bool",
+			inputdata: "true",
+			output:    true,
+		},
+		{
+			name:      "boolean: title",
+			inputtype: "Bool",
+			inputdata: "True",
+			output:    true,
+		},
+		{
+			name:      "boolean: capital",
+			inputtype: "Bool",
+			inputdata: "TRUE",
+			output:    true,
+		},
+		{
+			name:      "boolean: false title",
+			inputtype: "Bool",
+			inputdata: "False",
+			output:    false,
+		},
 	}
 
 	for _, tc := range testCases {
